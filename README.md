@@ -7,6 +7,8 @@ Entorno utilizado
 
 Sistema anfitrión Windows 11 Pro. Emulador DOSBox-X 2026.08.31. Ensamblador NASM para DOS versión 3.00.
 
+Virtualizador VirtualBox 7.2.22. Máquina virtual Lab5-Alpine con Alpine Linux 3.19 edición Standard, 1024 MB de RAM, 1 CPU y disco VDI dinámico de 10 GB.
+
 # PARTE 1 — DOSBox y ensamblador
 
 ## Checkpoint 1 — Estructura del directorio
@@ -79,3 +81,17 @@ Para estimar los ciclos reales que consume ciclos.com habría que medir el proce
 Capturas: capturas/p1_cp8_ciclos.png y capturas/p1_cp8_adm_tareas.png
 
 Para comprobar la segunda decisión se ejecutó otra vez ciclos.com con cycles en 8000 y mientras corría el bucle se abrió el Administrador de tareas de Windows. El bucle volvió a tardar 32,90 segundos, igual que en la corrida 1, y durante ese tiempo DOSBox-X solo usaba el 0,5 % de la CPU del equipo, que tiene 20 núcleos. Esto muestra que el valor de cycles no indica cuánto trabaja realmente el procesador del anfitrión.
+
+# PARTE 2 — VirtualBox y máquinas virtuales
+
+## Checkpoint 1 — VM creada y configurada
+Captura: capturas/p2_cp1_vm_config.png
+
+La máquina virtual se creó con VBoxManage desde PowerShell. Se registró con el nombre Lab5-Alpine y el tipo Other Linux de 64 bits, con 1024 MB de RAM, 16 MB de video, una CPU y la red en modo NAT. Se creó un disco VDI de asignación dinámica de 10 GB conectado a un controlador SATA, y la imagen ISO de Alpine Linux 3.19 quedó en la unidad de DVD de un controlador IDE. Todos los comandos usados están en el archivo VBoxManage_commands.sh.
+
+## Checkpoint 2 — Alpine Linux instalado y operativo
+Captura: capturas/p2_cp2_alpine_red.png
+
+La VM arrancó desde la ISO en modo live y la instalación se hizo con setup-alpine usando el nombre lab5-vm, la red por DHCP, la zona horaria America/Bogota, chrony como cliente NTP, openssh como servidor SSH y el disco sda en modo sys. El teclado se configuró como latam porque el equipo anfitrión usa un teclado latinoamericano. Al terminar se apagó la VM y se retiró la ISO de la unidad óptica para que arrancara desde el disco.
+
+Después de iniciar sesión como root, ip addr show eth0 mostró la dirección 10.0.2.15 que entrega el NAT de VirtualBox, y ping -c 3 8.8.8.8 recibió los tres paquetes sin pérdidas, lo que confirma que la VM tiene salida a internet.
