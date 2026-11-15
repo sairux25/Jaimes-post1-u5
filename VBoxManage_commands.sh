@@ -32,3 +32,13 @@ VBoxManage startvm "Lab5-Alpine" --type gui
 # Regreso a NAT
 VBoxManage controlvm "Lab5-Alpine" poweroff
 VBoxManage modifyvm "Lab5-Alpine" --nic1 nat
+
+# Paso 4. Snapshots, tomados con la VM encendida
+VBoxManage startvm "Lab5-Alpine" --type gui
+VBoxManage snapshot "Lab5-Alpine" take "snap_base" --description "Alpine Linux 3.19 recien instalado, sin modificaciones"
+# Dentro de la VM se ejecuto apk update y apk add curl wget nano htop
+VBoxManage snapshot "Lab5-Alpine" take "snap_con_herramientas" --description "Alpine con curl, wget, nano y htop instalados"
+VBoxManage snapshot "Lab5-Alpine" list --details
+VBoxManage controlvm "Lab5-Alpine" poweroff
+VBoxManage snapshot "Lab5-Alpine" restore "snap_base"
+VBoxManage startvm "Lab5-Alpine" --type gui

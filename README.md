@@ -108,3 +108,16 @@ Se probaron los tres modos de red. Para cada cambio se apagó la VM, se cambió 
 | Bridge | 192.168.1.4 | La VM tiene internet y queda en la misma red de la casa |
 
 En NAT la VM queda en una red privada que crea VirtualBox y sale a internet a través del anfitrión. En Host-Only queda en una red aislada con el anfitrión, por eso Windows sí le responde pero la VM no tiene ruta hacia internet. En Bridge la VM recibe la IP del router de la casa, en la misma red 192.168.1.0 donde está el anfitrión con 192.168.1.2. Al terminar la VM se dejó otra vez en NAT.
+
+## Checkpoint 4 — Snapshots
+Capturas: capturas/p2_cp4_herramientas_instaladas.png, capturas/p2_cp4_snapshots_lista.png y capturas/p2_cp4_restaurado_sin_curl.png
+
+Con la VM encendida se tomó el snapshot snap_base con Alpine recién instalado. Luego se instalaron curl, wget, nano y htop con apk y se tomó el snapshot snap_con_herramientas. El árbol de snapshots quedó así.
+
+```
+Lab5-Alpine
+└── snap_base            Alpine Linux 3.19 recien instalado, sin modificaciones
+    └── snap_con_herramientas   Alpine con curl, wget, nano y htop instalados
+```
+
+Después se apagó la VM y se restauró snap_base. Al iniciarla volvió con la sesión de root abierta, porque el snapshot se tomó en caliente y guardó también la memoria. Los comandos apk info -e curl y which curl no devolvieron nada y curl --version respondió not found, lo que confirma que la VM volvió al estado anterior sin tener que desinstalar nada a mano.
