@@ -28,3 +28,17 @@ El programa saludo.asm usa la función 09h de la interrupción 21h, que imprime 
 Captura: capturas/p1_cp4_entrada.png
 
 El programa entrada.asm muestra un mensaje, lee una tecla con la función 07h de la interrupción 21h y después muestra el carácter con la función 02h. Para el código ASCII separa el byte en dos nibbles y cada uno se convierte en un dígito hexadecimal con una subrutina. En la prueba se presionó la letra J y el programa mostró el código 4A, que es el valor ASCII de esa letra.
+
+## Checkpoint 5 — Depuración con DEBUG
+Capturas: capturas/p1_cp5_debug_1.png a p1_cp5_debug_3.png. 
+
+Al cargar saludo.com en DEBUG el comando r muestra IP en 0100, que es donde empiezan los programas .COM, y CX en 0075, que corresponde a los 117 bytes del archivo. El comando u 100 10F muestra las cinco instrucciones del programa y desde 010C aparecen instrucciones sin sentido porque ahí ya empieza el texto del mensaje.
+
+| Instrucción ejecutada con t | AX | DX | IP siguiente |
+|---|---|---|---|
+| Estado inicial | 0000 | 0000 | 0100 |
+| MOV AH,09 | 0900 | 0000 | 0102 |
+| MOV DX,010C | 0900 | 010C | 0105 |
+| INT 21 | 0924 | 010C | 0107 |
+
+Con el primer t solo cambia la parte alta de AX, y con el segundo DX queda apuntando a 010C, la dirección del mensaje. En el tercer t se ejecuta INT 21 y el mensaje aparece en pantalla. Después AX queda en 0924 porque DOS deja en AL el valor 24, que es el código del carácter $. Las banderas no cambiaron en ningún paso porque estas instrucciones no hacen operaciones aritméticas. Por último g ejecutó el resto del programa, que terminó normalmente con código 0000, y q cerró DEBUG.
