@@ -42,3 +42,40 @@ Al cargar saludo.com en DEBUG el comando r muestra IP en 0100, que es donde empi
 | INT 21 | 0924 | 010C | 0107 |
 
 Con el primer t solo cambia la parte alta de AX, y con el segundo DX queda apuntando a 010C, la dirección del mensaje. En el tercer t se ejecuta INT 21 y el mensaje aparece en pantalla. Después AX queda en 0924 porque DOS deja en AL el valor 24, que es el código del carácter $. Las banderas no cambiaron en ningún paso porque estas instrucciones no hacen operaciones aritméticas. Por último g ejecutó el resto del programa, que terminó normalmente con código 0000, y q cerró DEBUG.
+
+## Checkpoint 6 — Programa ciclos.com
+Captura: capturas/p1_cp6_ciclos_8000.png
+
+El programa ciclos.asm lee la hora del sistema con la función 2Ch de la interrupción 21h antes y después de un bucle que siempre da el mismo número de vueltas, 2000 del bucle externo por 65535 del interno. Con cycles en 8000 la hora inicial fue 09:46:42:51 y la final 09:47:15:41, así que el bucle tardó 32,90 segundos, es decir 3290 centésimas.
+
+## Checkpoint 7 — Comparación de cycles
+Capturas: capturas/p1_cp6_ciclos_8000.png, capturas/p1_cp7_ciclos_1000.png y capturas/p1_cp7_ciclos_20000.png
+
+Se ejecutó ciclos.com tres veces cambiando solo el valor de cycles en dosbox.conf y reiniciando DOSBox-X entre cada corrida. El programa fue el mismo en las tres, con el mismo número de vueltas del bucle.
+
+| Corrida | Cycles | Hora inicial | Hora final | Duración observada (centésimas) |
+|---|---|---|---|---|
+| 1 | 8000 | 09:46:42:51 | 09:47:15:41 | 3290 |
+| 2 | 1000 | 09:51:46:96 | 09:56:17:08 | 27012 |
+| 3 | 20000 | 09:57:00:91 | 09:57:14:04 | 1313 |
+
+Con cycles en 1000 el bucle tardó más de cuatro minutos y con 20000 apenas trece segundos. Las tres corridas mostraron la misma salida y solo cambió el tiempo, lo que confirma que cycles controla la velocidad de la emulación y no el resultado del programa. Al terminar las pruebas el archivo dosbox.conf quedó otra vez con cycles en 8000.
+
+## Decisión Técnica — Valor de cycles para el laboratorio
+Para este laboratorio el valor correcto es un número fijo de cycles, en este caso 8000. Con cycles=max DOSBox-X emula tantas instrucciones por segundo como permita el procesador del equipo anfitrión, que hoy es muchísimo más rápido que un PC de la época. Así ciclos.com terminaría casi al instante sin importar las 2000 por 65535 vueltas del código, y la diferencia entre la hora inicial y la final sería de muy pocas centésimas o incluso cero. La medición perdería sentido porque el tiempo ya no dependería del hardware de referencia que se quiere emular sino de la potencia de cada computador. Con cycles=auto pasa algo parecido, porque DOSBox-X cambia el valor según la carga del programa y dos corridas en el mismo equipo pueden dar tiempos distintos.
+
+Un valor fijo como 8000 hace que todos los estudiantes ejecuten el mismo número de instrucciones emuladas por milisegundo. Mientras el equipo alcance a sostener ese ritmo, ciclos.com tarda prácticamente lo mismo en cualquier computador, como los 32,90 segundos medidos en la corrida 1, y los resultados de distintos estudiantes se pueden comparar. Por eso se dejó 8000 en dosbox.conf desde el Paso 2.
+
+Fuera de este laboratorio cycles=max o cycles=auto sí son la opción correcta cuando importa que el programa responda rápido y no su temporización. Por ejemplo al usar un editor, un compilador o una hoja de cálculo para DOS, o al ensamblar programas grandes con NASM, conviene aprovechar toda la velocidad del anfitrión, ya que estos programas no usan la velocidad del procesador para medir el tiempo como sí lo hacían muchos juegos de la época.
+
+## Decisión Técnica — Cycles frente a los ciclos reales del procesador
+Comparar el valor 8000 de cycles con los GHz del procesador anfitrión sería un error de categoría porque miden cosas distintas. Cycles cuenta cuántas instrucciones x86 de 16 bits emula DOSBox-X en cada milisegundo de tiempo virtual, y de hecho la barra de título muestra 8000 cycles/ms. Los GHz del anfitrión cuentan ciclos de reloj físicos del silicio, que son miles de millones por segundo. Una instrucción emulada no equivale a un ciclo real.
+
+Para emular cada instrucción, DOSBox-X tiene que leerla, decodificarla y reproducir su efecto por software, y eso le cuesta al anfitrión un número variable de instrucciones nativas y de ciclos reales. Por eso el procesador real gasta muchos más ciclos de los que sugiere cycles. Esto implica que cycles no dice cuánta CPU usa el proceso dosbox-x.exe. Con el mismo valor de cycles el uso real puede cambiar según el procesador, el core configurado o el tipo de instrucciones del programa, y con un valor muy alto el proceso puede llegar a ocupar un núcleo completo del anfitrión.
+
+Para estimar los ciclos reales que consume ciclos.com habría que medir el proceso dosbox-x.exe desde Windows mientras corre el bucle, en lugar de leer el valor de cycles del archivo de configuración. El Administrador de tareas, en la pestaña Detalles, muestra el porcentaje de CPU y el tiempo de CPU acumulado del proceso. Una herramienta más precisa es Process Explorer, que puede mostrar los ciclos de CPU consumidos por cada proceso. En Linux se podría usar perf stat, que cuenta directamente los ciclos de reloj que usa un programa.
+
+## Checkpoint 8 — Decisiones técnicas de cycles
+Capturas: capturas/p1_cp8_ciclos.png y capturas/p1_cp8_adm_tareas.png
+
+Para comprobar la segunda decisión se ejecutó otra vez ciclos.com con cycles en 8000 y mientras corría el bucle se abrió el Administrador de tareas de Windows. El bucle volvió a tardar 32,90 segundos, igual que en la corrida 1, y durante ese tiempo DOSBox-X solo usaba el 0,5 % de la CPU del equipo, que tiene 20 núcleos. Esto muestra que el valor de cycles no indica cuánto trabaja realmente el procesador del anfitrión.
