@@ -159,7 +159,7 @@ Captura: capturas/p2_cp7_tamano_vdi.png
 Para respaldar la segunda decisión se listó el tamaño real de los discos de la VM en la carpeta de VirtualBox. Lab5-Alpine-fixed.vdi ocupa 4098 MB aunque solo tiene un archivo de prueba, mientras que Lab5-Alpine.vdi ocupa 271 MB aunque está declarado de 10 GB. Los dos archivos con nombre entre llaves son los discos de diferencias que crearon los snapshots, con 28 MB y 27 MB.
 
 ## Checkpoint 8 — Exportación OVA y repositorio consolidado
-Capturas: capturas/p2_cp8_ova.png y [PENDIENTE: captura de la vista del repositorio en GitHub]
+Capturas: capturas/p2_cp8_ova.png y capturas/p2_cp8_github.png
 
 Con la VM apagada se exportó Lab5-Alpine en formato OVA con un manifiesto. El comando terminó con el mensaje Successfully exported 1 machine(s) y el archivo Lab5-Alpine-export.ova quedó con 168 793 088 bytes, unos 161 MB. Es mucho menos que la suma de los discos porque el OVA guarda los discos comprimidos y no incluye los bloques vacíos, así que los 4 GB del disco fijo casi no ocupan espacio dentro del archivo. El .ova quedó en la carpeta VirtualBox VMs del anfitrión y no se sube al repositorio, igual que los archivos .vdi, por eso están en el .gitignore.
 
