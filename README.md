@@ -23,3 +23,8 @@ DOSBox se inicia con el archivo dosbox.conf del repositorio y al abrir aparece d
 Captura: capturas/p1_cp3_saludo.png
 
 El programa saludo.asm usa la función 09h de la interrupción 21h, que imprime en pantalla una cadena terminada en el carácter $. Se ensambló desde la carpeta src y NASM generó bin/saludo.com sin mensajes de error. Al ejecutarlo se muestran las tres líneas con los datos del laboratorio y de la estudiante.
+
+## Checkpoint 4 — Programa entrada.com
+Captura: capturas/p1_cp4_entrada.png
+
+El programa entrada.asm muestra un mensaje, lee una tecla con la función 07h de la interrupción 21h y después muestra el carácter con la función 02h. Para el código ASCII separa el byte en dos nibbles y cada uno se convierte en un dígito hexadecimal con una subrutina. En la prueba se presionó la letra J y el programa mostró el código 4A, que es el valor ASCII de esa letra.
