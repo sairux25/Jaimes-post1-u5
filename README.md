@@ -157,3 +157,16 @@ Asignar 2 CPUs y 2048 MB es razonable porque en un equipo típico de 4 a 8 CPUs 
 Captura: capturas/p2_cp7_tamano_vdi.png
 
 Para respaldar la segunda decisión se listó el tamaño real de los discos de la VM en la carpeta de VirtualBox. Lab5-Alpine-fixed.vdi ocupa 4098 MB aunque solo tiene un archivo de prueba, mientras que Lab5-Alpine.vdi ocupa 271 MB aunque está declarado de 10 GB. Los dos archivos con nombre entre llaves son los discos de diferencias que crearon los snapshots, con 28 MB y 27 MB.
+
+## Checkpoint 8 — Exportación OVA y repositorio consolidado
+Capturas: capturas/p2_cp8_ova.png y [PENDIENTE: captura de la vista del repositorio en GitHub]
+
+Con la VM apagada se exportó Lab5-Alpine en formato OVA con un manifiesto. El comando terminó con el mensaje Successfully exported 1 machine(s) y el archivo Lab5-Alpine-export.ova quedó con 168 793 088 bytes, unos 161 MB. Es mucho menos que la suma de los discos porque el OVA guarda los discos comprimidos y no incluye los bloques vacíos, así que los 4 GB del disco fijo casi no ocupan espacio dentro del archivo. El .ova quedó en la carpeta VirtualBox VMs del anfitrión y no se sube al repositorio, igual que los archivos .vdi, por eso están en el .gitignore.
+
+# Conclusiones
+
+DOSBox y VirtualBox permiten ejecutar otro sistema dentro de Windows, pero lo hacen de forma muy distinta. DOSBox es un emulador. Imita en software un procesador x86 antiguo y cada instrucción del programa la interpreta el propio DOSBox. Por eso la velocidad del programa depende del valor de cycles y no del procesador real. El mismo ciclos.com tardó 270,12 segundos con 1000 cycles, 32,90 con 8000 y 13,13 con 20000, y mientras tanto DOSBox-X solo usaba alrededor del 0,5 % de la CPU del equipo. El valor de cycles es entonces un límite que pone el emulador y no una medida del trabajo del procesador.
+
+VirtualBox en cambio virtualiza. El sistema invitado usa la misma arquitectura que el anfitrión y sus instrucciones se ejecutan directamente en el procesador real, con VirtualBox controlando los recursos que se le prestan. Por eso Alpine funcionó con una velocidad normal y lo que se configura no es una velocidad sino cuántos CPUs, cuánta RAM y qué discos ve la VM. Esos cambios se hicieron con la VM apagada y se comprobaron dentro de ella con nproc y free.
+
+En la red se vio que cada modo cambia quién puede llegar a la VM. Con NAT la VM salió a internet con la dirección 10.0.2.15 sin ser visible desde la red de la casa. Con Host-Only solo se comunicó con el anfitrión, y con Bridge quedó en la misma red que los demás equipos. Los snapshots mostraron que se puede volver a un estado anterior en segundos, ya que al restaurar snap_base desapareció curl, y que cada snapshot crea un disco de diferencias pequeño en lugar de copiar todo el disco. Finalmente la comparación de discos mostró que el disco fijo es apenas más rápido, pero el dinámico ahorra mucho espacio, y la exportación OVA permite llevar toda la VM en un solo archivo a otro equipo.

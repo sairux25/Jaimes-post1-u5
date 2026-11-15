@@ -58,3 +58,9 @@ VBoxManage storageattach "Lab5-Alpine" --storagectl "SATA" --port 1 --device 0 -
 VBoxManage startvm "Lab5-Alpine" --type gui
 # Dentro de la VM se particiono /dev/sdb con fdisk, se formateo con mkfs.ext4, se monto en /mnt/fijo
 # y se midio la escritura con time dd en /mnt/fijo y en /root
+
+# Paso 9. Exportacion de la VM en formato OVA, con la VM apagada
+# Se ejecuto dentro de C:\Users\SaritaUltra\VirtualBox VMs para que el .ova quede fuera del repositorio
+VBoxManage controlvm "Lab5-Alpine" poweroff
+VBoxManage export "Lab5-Alpine" --output "Lab5-Alpine-export.ova" --manifest --options manifest
+dir Lab5-Alpine-export.ova
