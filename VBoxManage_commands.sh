@@ -13,3 +13,22 @@ VBoxManage storageattach "Lab5-Alpine" --storagectl "IDE" --port 0 --device 0 --
 
 # Paso 2. Despues de instalar Alpine se retira la ISO para arrancar desde el disco
 VBoxManage storageattach "Lab5-Alpine" --storagectl "IDE" --port 0 --device 0 --type dvddrive --medium emptydrive
+
+# Paso 3. Modos de red
+# El adaptador Host-Only ya existia con IP 192.168.56.1, por eso no se uso hostonlyif create
+VBoxManage list hostonlyifs
+VBoxManage list bridgedifs
+
+# Modo Host-Only
+VBoxManage controlvm "Lab5-Alpine" poweroff
+VBoxManage modifyvm "Lab5-Alpine" --nic1 hostonly --hostonlyadapter1 "VirtualBox Host-Only Ethernet Adapter"
+VBoxManage startvm "Lab5-Alpine" --type gui
+
+# Modo Bridge
+VBoxManage controlvm "Lab5-Alpine" poweroff
+VBoxManage modifyvm "Lab5-Alpine" --nic1 bridged --bridgeadapter1 "Intel(R) Ethernet Controller I226-V"
+VBoxManage startvm "Lab5-Alpine" --type gui
+
+# Regreso a NAT
+VBoxManage controlvm "Lab5-Alpine" poweroff
+VBoxManage modifyvm "Lab5-Alpine" --nic1 nat

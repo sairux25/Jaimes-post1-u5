@@ -95,3 +95,16 @@ Captura: capturas/p2_cp2_alpine_red.png
 La VM arrancó desde la ISO en modo live y la instalación se hizo con setup-alpine usando el nombre lab5-vm, la red por DHCP, la zona horaria America/Bogota, chrony como cliente NTP, openssh como servidor SSH y el disco sda en modo sys. El teclado se configuró como latam porque el equipo anfitrión usa un teclado latinoamericano. Al terminar se apagó la VM y se retiró la ISO de la unidad óptica para que arrancara desde el disco.
 
 Después de iniciar sesión como root, ip addr show eth0 mostró la dirección 10.0.2.15 que entrega el NAT de VirtualBox, y ping -c 3 8.8.8.8 recibió los tres paquetes sin pérdidas, lo que confirma que la VM tiene salida a internet.
+
+## Checkpoint 3 — Modos de red
+Capturas: capturas/p2_cp3_red_nat.png, capturas/p2_cp3_red_hostonly.png, capturas/p2_cp3_hostonly_ping_anfitrion.png y capturas/p2_cp3_red_bridge.png
+
+Se probaron los tres modos de red. Para cada cambio se apagó la VM, se cambió el modo con VBoxManage modifyvm y se volvió a iniciar. El adaptador Host-Only de VirtualBox ya existía con la IP 192.168.56.1, así que no fue necesario crearlo.
+
+| Modo | IP de la VM | Resultado |
+|---|---|---|
+| NAT | 10.0.2.15 | La VM tiene internet |
+| Host-Only | 192.168.56.101 | El anfitrión llega a la VM pero la VM no tiene internet |
+| Bridge | 192.168.1.4 | La VM tiene internet y queda en la misma red de la casa |
+
+En NAT la VM queda en una red privada que crea VirtualBox y sale a internet a través del anfitrión. En Host-Only queda en una red aislada con el anfitrión, por eso Windows sí le responde pero la VM no tiene ruta hacia internet. En Bridge la VM recibe la IP del router de la casa, en la misma red 192.168.1.0 donde está el anfitrión con 192.168.1.2. Al terminar la VM se dejó otra vez en NAT.
