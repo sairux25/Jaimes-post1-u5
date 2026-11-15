@@ -121,3 +121,8 @@ Lab5-Alpine
 ```
 
 Después se apagó la VM y se restauró snap_base. Al iniciarla volvió con la sesión de root abierta, porque el snapshot se tomó en caliente y guardó también la memoria. Los comandos apk info -e curl y which curl no devolvieron nada y curl --version respondió not found, lo que confirma que la VM volvió al estado anterior sin tener que desinstalar nada a mano.
+
+## Checkpoint 5 — Recursos de la VM reasignados
+Capturas: capturas/p2_cp5_modifyvm.png y capturas/p2_cp5_nproc_free.png
+
+Con la VM apagada se consultó la configuración con showvminfo, que mostraba 1024 MB de memoria y 1 CPU. Luego se ejecutó VBoxManage modifyvm con 2 CPUs y 2048 MB sin errores, y al consultar de nuevo ya aparecían los valores nuevos. Al iniciar la VM, nproc mostró 2 procesadores y free -m mostró 1976 MB de memoria total. Este número es un poco menor que 2048 porque el kernel de Linux se reserva una parte de la memoria para sí mismo al arrancar.

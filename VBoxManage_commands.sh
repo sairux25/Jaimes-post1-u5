@@ -42,3 +42,11 @@ VBoxManage snapshot "Lab5-Alpine" list --details
 VBoxManage controlvm "Lab5-Alpine" poweroff
 VBoxManage snapshot "Lab5-Alpine" restore "snap_base"
 VBoxManage startvm "Lab5-Alpine" --type gui
+
+# Paso 5. Reasignacion de CPU y RAM con la VM apagada
+VBoxManage controlvm "Lab5-Alpine" poweroff
+VBoxManage showvminfo "Lab5-Alpine" | findstr /i "memory cpus"
+VBoxManage modifyvm "Lab5-Alpine" --cpus 2 --memory 2048
+VBoxManage showvminfo "Lab5-Alpine" | findstr /i "memory cpus"
+VBoxManage startvm "Lab5-Alpine" --type gui
+# Dentro de la VM se verifico con nproc y free -m
