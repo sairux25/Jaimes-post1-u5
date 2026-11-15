@@ -5,7 +5,7 @@ Este repositorio contiene el desarrollo de las dos partes del laboratorio de emu
 
 Entorno utilizado
 
-Sistema anfitrión Windows 11 Pro. Emulador DOSBox 0.74-3. Ensamblador NASM para DOS versión 3.00.
+Sistema anfitrión Windows 11 Pro. Emulador DOSBox-X 2026.08.31. Ensamblador NASM para DOS versión 3.00.
 
 # PARTE 1 — DOSBox y ensamblador
 
@@ -18,3 +18,8 @@ El directorio de trabajo se organizó en tres carpetas. En src se guardan los ar
 Captura: capturas/p1_cp2_dosbox_nasm.png
 
 DOSBox se inicia con el archivo dosbox.conf del repositorio y al abrir aparece directamente el prompt C:\> porque la carpeta del proyecto se monta como unidad C. El comando nasm -v muestra la versión 3.00 del ensamblador sin errores.
+
+## Checkpoint 3 — Programa saludo.com
+Captura: capturas/p1_cp3_saludo.png
+
+El programa saludo.asm usa la función 09h de la interrupción 21h, que imprime en pantalla una cadena terminada en el carácter $. Se ensambló desde la carpeta src y NASM generó bin/saludo.com sin mensajes de error. Al ejecutarlo se muestran las tres líneas con los datos del laboratorio y de la estudiante.
