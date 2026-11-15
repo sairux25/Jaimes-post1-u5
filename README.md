@@ -126,3 +126,15 @@ Después se apagó la VM y se restauró snap_base. Al iniciarla volvió con la s
 Capturas: capturas/p2_cp5_modifyvm.png y capturas/p2_cp5_nproc_free.png
 
 Con la VM apagada se consultó la configuración con showvminfo, que mostraba 1024 MB de memoria y 1 CPU. Luego se ejecutó VBoxManage modifyvm con 2 CPUs y 2048 MB sin errores, y al consultar de nuevo ya aparecían los valores nuevos. Al iniciar la VM, nproc mostró 2 procesadores y free -m mostró 1976 MB de memoria total. Este número es un poco menor que 2048 porque el kernel de Linux se reserva una parte de la memoria para sí mismo al arrancar.
+
+## Checkpoint 6 — Disco fijo frente a disco dinámico
+Capturas: capturas/p2_cp6_fdisk.png, capturas/p2_cp6_formato_montaje.png y capturas/p2_cp6_benchmark_dd.png
+
+Con la VM apagada se creó Lab5-Alpine-fixed.vdi, un disco de 4 GB con asignación fija, y se conectó al puerto 1 del controlador SATA. En cuanto se creó ya ocupaba 4098 MB en el disco del anfitrión, mientras que Lab5-Alpine.vdi, que es dinámico y de 10 GB, ocupaba solo 271 MB. Dentro de Alpine el disco nuevo apareció como /dev/sdb. Se creó una partición primaria con fdisk, se formateó con mkfs.ext4 y se montó en /mnt/fijo. Luego se escribieron 200 MB con dd en cada disco.
+
+| Tipo de disco | Comando | Tiempo real |
+|---|---|---|
+| Fijo (Lab5-Alpine-fixed.vdi) | dd sobre /mnt/fijo/test.img | 0,44 s |
+| Dinámico (Lab5-Alpine.vdi) | dd sobre /root/test.img | 0,45 s |
+
+El disco fijo fue un poco más rápido, aunque la diferencia es de apenas una centésima. Esto pasa porque dd escribe primero en la memoria caché del sistema y con 2 GB de RAM los 200 MB caben completos, así que la medición depende más de la memoria que del disco. Como la VM tiene snapshots, las escrituras del disco principal van a un disco de diferencias dentro de la carpeta Snapshots, que también crece de forma dinámica.

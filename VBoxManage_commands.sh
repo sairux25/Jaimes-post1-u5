@@ -50,3 +50,11 @@ VBoxManage modifyvm "Lab5-Alpine" --cpus 2 --memory 2048
 VBoxManage showvminfo "Lab5-Alpine" | findstr /i "memory cpus"
 VBoxManage startvm "Lab5-Alpine" --type gui
 # Dentro de la VM se verifico con nproc y free -m
+
+# Paso 6. Segundo disco de 4 GB con asignacion fija
+VBoxManage controlvm "Lab5-Alpine" poweroff
+VBoxManage createmedium disk --filename "C:\Users\SaritaUltra\VirtualBox VMs\Lab5-Alpine\Lab5-Alpine-fixed.vdi" --size 4096 --format VDI --variant Fixed
+VBoxManage storageattach "Lab5-Alpine" --storagectl "SATA" --port 1 --device 0 --type hdd --medium "C:\Users\SaritaUltra\VirtualBox VMs\Lab5-Alpine\Lab5-Alpine-fixed.vdi"
+VBoxManage startvm "Lab5-Alpine" --type gui
+# Dentro de la VM se particiono /dev/sdb con fdisk, se formateo con mkfs.ext4, se monto en /mnt/fijo
+# y se midio la escritura con time dd en /mnt/fijo y en /root
